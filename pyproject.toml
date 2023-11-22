@@ -1,3 +1,6 @@
+[project]
+readme = "README.md"
+
 [tool.poetry]
 name = "kalista"
 version = "0.1.4"
