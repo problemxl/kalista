@@ -8,14 +8,12 @@ description = ""
 authors = ["Mark Franciscus <mark.franciscus@hotmail.com>"]
 
 [tool.poetry.dependencies]
-# python version greater than 3.6 but less than 3.11
-python = "^3.9"
+python = "^3.10, <3.12"
 loguru = "*"
 decorators = "*"
 pydantic = "*"
 pandas = "^2.0.2"
 aiohttp = "3.9.0"
-requests = "^2.31.0"
 pendulum = "^2.1.2"
 
 [tool.poetry.dev-dependencies]
