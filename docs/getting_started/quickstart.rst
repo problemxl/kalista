@@ -99,7 +99,7 @@ The `player_frames` contain the data for each player in the game, and the `team_
         Game example
         """
 
-        game = Game(game_id="110853020184706766")
+        game = Game(id="110853020184706766")
 
         # Fetch the game data
         await game.fetch()

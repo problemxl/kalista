@@ -90,6 +90,27 @@ class Game(BaseModel):
             )
         return self._player_frames
 
+    @property
+    def team_frames(self) -> DataFrame:
+        """
+        Returns the team frames
+
+        Returns
+        -------
+        DataFrame
+            Team frames, gives information for each frame of a game
+
+        Raises
+        ------
+        AttributeError
+            If frames have not been fetched yet. call await fetch() first.
+        """
+        if self._team_frames.empty:
+            raise AttributeError(
+                "Frames have not been fetched yet. call await fetch() first."
+            )
+        return self._team_frames
+
     async def fetch(self):
         """
         Fetch all the frame data
