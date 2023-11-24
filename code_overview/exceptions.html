@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Excepetions &mdash; kalista 0.9 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=049aceee"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="How Kalista Works" href="rationale.html" />
+    <link rel="prev" title="Kalista Models" href="kalista.models.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kalista
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting_started/quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Overview:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="kalista.models.html">Kalista Models</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Excepetions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidGame"><code class="docutils literal notranslate"><span class="pre">InvalidGame</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidGame.message"><code class="docutils literal notranslate"><span class="pre">InvalidGame.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidLeague"><code class="docutils literal notranslate"><span class="pre">InvalidLeague</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidLeague.message"><code class="docutils literal notranslate"><span class="pre">InvalidLeague.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidMatch"><code class="docutils literal notranslate"><span class="pre">InvalidMatch</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidMatch.message"><code class="docutils literal notranslate"><span class="pre">InvalidMatch.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidPlayer"><code class="docutils literal notranslate"><span class="pre">InvalidPlayer</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidPlayer.message"><code class="docutils literal notranslate"><span class="pre">InvalidPlayer.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidSchedule"><code class="docutils literal notranslate"><span class="pre">InvalidSchedule</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidSchedule.message"><code class="docutils literal notranslate"><span class="pre">InvalidSchedule.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidStandings"><code class="docutils literal notranslate"><span class="pre">InvalidStandings</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidStandings.message"><code class="docutils literal notranslate"><span class="pre">InvalidStandings.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidTeam"><code class="docutils literal notranslate"><span class="pre">InvalidTeam</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidTeam.message"><code class="docutils literal notranslate"><span class="pre">InvalidTeam.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.InvalidTournament"><code class="docutils literal notranslate"><span class="pre">InvalidTournament</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.InvalidTournament.message"><code class="docutils literal notranslate"><span class="pre">InvalidTournament.message</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#kalista.models.exceptions.KalistaException"><code class="docutils literal notranslate"><span class="pre">KalistaException</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#kalista.models.exceptions.KalistaException.message"><code class="docutils literal notranslate"><span class="pre">KalistaException.message</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rationale.html">How Kalista Works</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kalista</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Excepetions</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/code_overview/exceptions.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-kalista.models.exceptions">
+<span id="excepetions"></span><h1>Excepetions<a class="headerlink" href="#module-kalista.models.exceptions" title="Link to this heading"></a></h1>
+<p>This module contains all the exceptions that can be raised by the models.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidGame">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidGame</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">game_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidGame"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidGame" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the game id is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidGame.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#kalista.models.exceptions.InvalidGame.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidLeague">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidLeague</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidLeague"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidLeague" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the league slug is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidLeague.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.InvalidLeague.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidMatch">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidMatch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidMatch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidMatch" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the match id is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidMatch.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.InvalidMatch.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidPlayer">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidPlayer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">summoner_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidPlayer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidPlayer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the player slug is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidPlayer.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.InvalidPlayer.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidSchedule">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidSchedule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">league_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidSchedule"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidSchedule" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the schedule id is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidSchedule.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.InvalidSchedule.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidStandings">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidStandings</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidStandings"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidStandings" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the standings id is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidStandings.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#kalista.models.exceptions.InvalidStandings.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidTeam">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidTeam</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidTeam"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidTeam" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the team slug is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidTeam.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.InvalidTeam.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidTournament">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">InvalidTournament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">league_slug</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tournament_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exception</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Exception</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#InvalidTournament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.InvalidTournament" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="#kalista.models.exceptions.KalistaException" title="kalista.models.exceptions.KalistaException"><code class="xref py py-class docutils literal notranslate"><span class="pre">KalistaException</span></code></a></p>
+<p>Raised when the tournament id is invalid.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.InvalidTournament.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.InvalidTournament.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="kalista.models.exceptions.KalistaException">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">kalista.models.exceptions.</span></span><span class="sig-name descname"><span class="pre">KalistaException</span></span><a class="reference internal" href="../_modules/kalista/models/exceptions.html#KalistaException"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#kalista.models.exceptions.KalistaException" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Base exception class for Kalista.</p>
+<dl class="py property">
+<dt class="sig sig-object py" id="kalista.models.exceptions.KalistaException.message">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#kalista.models.exceptions.KalistaException.message" title="Link to this definition"></a></dt>
+<dd><p>Returns the exception message.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="kalista.models.html" class="btn btn-neutral float-left" title="Kalista Models" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rationale.html" class="btn btn-neutral float-right" title="How Kalista Works" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, problemxl.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
