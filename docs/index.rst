@@ -45,9 +45,9 @@ Kalista is still under development and several features are still missing.
    :maxdepth: 1
    :caption: Getting Started:
 
-   getting_started/quickstart
    getting_started/installation
-
+   getting_started/quickstart
+   
 .. _code_overview:
 
 .. toctree::
