@@ -95,6 +95,8 @@ class Team(BaseModel):
                         role=player["role"],
                         team_id=self.id,
                         team_name=self.name,
+                        league=self.league_name,
+                        region=self.region,
                     )
                     for player in team["players"]
                 ]
@@ -104,6 +106,7 @@ class Team(BaseModel):
 
     def __repr__(self):
         return f"{self.__class__.__name__}({self.name})"
+
 
     @classmethod
     async def get_all_teams(cls) -> list["Team"]:
@@ -138,6 +141,22 @@ class Team(BaseModel):
                     if home_league is None:
                         home_league = {}
 
+                    roster = [
+                        Player(
+                            id=player["id"],
+                            summoner_name=player["summonerName"],
+                            first_name=player["firstName"],
+                            last_name=player["lastName"],
+                            image=player["image"],
+                            role=player["role"],
+                            team_id=int(team["id"]),
+                            team_name=team["name"],
+                            region=home_league.get("region", None),
+                            league=home_league.get("name", None),
+                        )
+                        for player in team["players"]
+                    ]
+
                     teams.append(
                         cls(
                             id=int(team["id"]),
@@ -149,6 +168,7 @@ class Team(BaseModel):
                             background_image=team["backgroundImage"],
                             region=home_league.get("region"),
                             league_name=home_league.get("name"),
+                            roster=roster,
                         )
                     )
                 except Exception as e:

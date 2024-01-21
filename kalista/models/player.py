@@ -64,3 +64,15 @@ class Player(BaseModel):
         # TODO: Implement this
         raise NotImplementedError
         # return self.games
+
+    @classmethod
+    def get_all_players(cls) -> list["Player"]:
+        """
+        Get all players
+
+        Returns
+        -------
+        list[Player]
+            The list of all players
+        """
+        raise NotImplementedError
