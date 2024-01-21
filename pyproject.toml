@@ -3,7 +3,7 @@ readme = "README.md"
 
 [tool.poetry]
 name = "kalista"
-version = "0.1.6"
+version = "0.1.7"
 description = ""
 authors = ["Mark Franciscus <mark.franciscus@hotmail.com>"]
 
