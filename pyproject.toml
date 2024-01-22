@@ -3,7 +3,7 @@ readme = "README.md"
 
 [tool.poetry]
 name = "kalista"
-version = "0.1.8"
+version = "0.1.9"
 description = ""
 authors = ["Mark Franciscus <mark.franciscus@hotmail.com>"]
 
@@ -45,7 +45,7 @@ build-backend = "poetry.core.masonry.api"
 max-line-length = 140
 disable = ["C0114", "R0902"]
 
-[pytest]
+[tool.pytest]
 log_cli = false
 vcr_record_mode = "once"
 vcr_cassette_library_dir = "tests/fixtures/vcr_cassettes"

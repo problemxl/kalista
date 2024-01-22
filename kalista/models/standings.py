@@ -84,6 +84,10 @@ class Standings(BaseModel):
                     teams_set.add(team["code"])
             self.teams = list(teams_set)
 
+            for i, team in enumerate(self.teams):
+                if self.standings.get(i + 1) is None:
+                    self.standings[i + 1] = []
+
 
 def convert_to_ordinal(n: int):
     """
