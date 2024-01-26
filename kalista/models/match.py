@@ -29,8 +29,14 @@ class Match(BaseModel):
     team1: Optional[Team] = None
     """ The first :class:Team in the match. """
 
+    team1_code: Optional[str] = None
+    """ The code of the first :class:Team in the match. """
+
     team2: Optional[Team] = None
     """ The second :class:Team in the match. """
+
+    team2_code: Optional[str] = None
+    """ The code of the second :class:Team in the match. """
 
     winner: Optional[str] = None
     """ The winner of the match. """
@@ -173,5 +179,5 @@ class Match(BaseModel):
 
     def __str__(self):
         return (
-            f"{self.team1} vs {self.team2} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
+            f"{self.team1_code} vs {self.team2_code} - {self.date.strftime('%Y-%m-%d %H:%M:%S')}"
         )

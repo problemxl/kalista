@@ -72,15 +72,15 @@ class Schedule(BaseModel):
                     match_id = match["match"]["id"]
                     # date = datetime.fromisoformat(match["startTime"])
                     date = arrow.get(match["startTime"]).datetime
-                    # team1 = match["match"]["teams"][0]["code"]
-                    # team2 = match["match"]["teams"][1]["code"]
+                    team1 = match["match"]["teams"][0]["code"]
+                    team2 = match["match"]["teams"][1]["code"]
                     league = match["league"]["name"]
                     best_of = match["match"]["strategy"]["count"]
                     match = Match(
                         id=match_id,
                         date=date,
-                        # team1=team1,
-                        # team2=team2,
+                        team1_code=team1,
+                        team2_code=team2,
                         league=league,
                         best_of=best_of,
                     )
