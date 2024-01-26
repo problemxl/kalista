@@ -28,7 +28,7 @@ def schedule():
     """
     Basic test fixture for Schedule class
     """
-    return Schedule(id=98767991299243165)
+    return Schedule()
 
 
 @pytest.mark.asyncio

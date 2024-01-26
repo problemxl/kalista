@@ -107,7 +107,6 @@ class Team(BaseModel):
     def __repr__(self):
         return f"{self.__class__.__name__}({self.name})"
 
-
     @classmethod
     async def get_all_teams(cls) -> list["Team"]:
         """
