@@ -70,7 +70,6 @@ class Schedule(BaseModel):
                 for match in matches:
                     # logger.info(f"Getting match {match['id']} data")
                     match_id = match["match"]["id"]
-                    # date = datetime.fromisoformat(match["startTime"])
                     date = arrow.get(match["startTime"]).datetime
                     team1 = match["match"]["teams"][0]["code"]
                     team2 = match["match"]["teams"][1]["code"]
