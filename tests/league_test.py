@@ -32,7 +32,7 @@ async def test_invalid_slug():
 
 
 @pytest.mark.asyncio
-@pytest.mark.vcr
+# @pytest.mark.vcr
 async def test_get_leagues():
     leagues = await League.get_all_leagues()
     assert len(leagues) > 0

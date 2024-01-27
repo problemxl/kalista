@@ -20,3 +20,11 @@ async def test_get_match(match):
 
     await match.fetch()
     assert len(match.games) > 0
+
+
+@pytest.mark.asyncio
+# @pytest.mark.vcr
+async def test_specific_match():
+    match = Match(id=111720485044707008)
+    await match.fetch()
+    assert len(match.games) > 0

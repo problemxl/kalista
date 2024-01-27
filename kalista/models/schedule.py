@@ -2,6 +2,7 @@ from typing import Optional
 
 import aiohttp
 import arrow
+from aiohttp import ClientSession
 from loguru import logger
 from pydantic import BaseModel
 
@@ -44,49 +45,68 @@ class Schedule(BaseModel):
         # await self._get_tournament()
         await self._get_schedule()
 
-    async def _get_schedule(self):
-        page_token = "placeholder"
-        while page_token is not None:
-            if page_token != "placeholder":
-                self._get_schedule_params["pageToken"] = page_token
+    async def _get_schedule(self, client: ClientSession = None) -> None:
+        page_token = ""
+        page_token_queue = []
+        page_token_fetched = set()
+        client_flag = False
+        if client is None:
+            client = ClientSession(headers=self._header)
+            client_flag = True
+        while page_token != None:
+            page_tokens = await self._fetch_data(client)
+            page_token_queue.extend(page_tokens)
+            page_token_fetched.add(page_token)
+            logger.info(f"Got page {page_token}")
+            page_token = page_token_queue.pop(0)
+            while page_token in page_token_fetched:
+                page_token = page_token_queue.pop(0)
 
-            async with aiohttp.ClientSession(headers=self._header) as client:
-                try:
-                    response = await client.get(
-                        self._get_schedule_url, params=self._get_schedule_params
-                    )
-                    response.raise_for_status()
+            self._get_schedule_params["pageToken"] = page_token
 
-                except Exception as request_error:
-                    logger.error(f"Error getting schedule data: {request_error}")
-                    raise InvalidSchedule(
-                        self.league_id, request_error
-                    ) from request_error
+        if client_flag:
+            await client.close()
 
-                data = await response.json()
-                # logger.success("Got schedule data")
-                page_token = data["data"]["schedule"]["pages"]["older"]
-                matches = data["data"]["schedule"]["events"][::-1]
-                for match in matches:
-                    # logger.info(f"Getting match {match['id']} data")
-                    match_id = match["match"]["id"]
-                    date = arrow.get(match["startTime"]).datetime
-                    team1 = match["match"]["teams"][0]["code"]
-                    team2 = match["match"]["teams"][1]["code"]
-                    league = match["league"]["name"]
-                    best_of = match["match"]["strategy"]["count"]
-                    match = Match(
-                        id=match_id,
-                        date=date,
-                        team1_code=team1,
-                        team2_code=team2,
-                        league=league,
-                        best_of=best_of,
-                    )
-                    self.matches.append(match)
+    async def _fetch_data(self, client: ClientSession) -> list[str]:
+        try:
+            response = await client.get(
+                self._get_schedule_url, params=self._get_schedule_params
+            )
+            response.raise_for_status()
+
+        except Exception as request_error:
+            logger.error(f"Error getting schedule data: {request_error}")
+            raise InvalidSchedule(
+                self.league_id, request_error
+            ) from request_error
+        data = await response.json()
+        # logger.success("Got schedule data")
+        page_tokens = [data["data"]["schedule"]["pages"]["older"], data["data"]["schedule"]["pages"]["newer"]]
+        matches = data["data"]["schedule"]["events"][::-1]
+        for match in matches:
+            if match.get("match") is None:
+                continue
+            match_id = match["match"]["id"]
+            date = arrow.get(match["startTime"]).datetime
+            team1 = match["match"]["teams"][0]["code"]
+            team2 = match["match"]["teams"][1]["code"]
+            league = match["league"]["name"]
+            best_of = match["match"]["strategy"]["count"]
+            match = Match(
+                id=match_id,
+                start_time=date,
+                team1_code=team1,
+                team2_code=team2,
+                league=league,
+                best_of=best_of,
+            )
+            self.matches.append(match)
+        return page_tokens
 
     async def _get_tournament(self):
-        """ """
+        """
+
+        """
         async with aiohttp.ClientSession(headers=self._header) as client:
             try:
                 response = await client.get(

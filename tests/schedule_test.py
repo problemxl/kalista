@@ -1,4 +1,7 @@
+import asyncio
+
 import pytest
+from aiohttp import ClientSession
 
 from kalista.models.league import League
 from kalista.models.schedule import Schedule
@@ -40,3 +43,6 @@ async def test_get_schedule(schedule):
     assert len(schedule.matches) == 0
     await schedule.fetch()
     assert len(schedule.matches) > 0
+    async with ClientSession() as session:
+        tasks = [match.fetch(session) for match in schedule.matches]
+        await asyncio.gather(*tasks)
