@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>kalista.models.game &mdash; kalista 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=049aceee"></script>
+        <script src="../../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            kalista
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quickstart.html">Quickstart</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../code_overview/kalista.models.html">Kalista Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code_overview/exceptions.html">Excepetions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../code_overview/rationale.html">How Kalista Works</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">kalista</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">kalista.models.game</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for kalista.models.game</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Coroutine</span><span class="p">,</span> <span class="n">List</span>
+
+<span class="kn">import</span> <span class="nn">aiohttp</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">loguru</span> <span class="kn">import</span> <span class="n">logger</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">json_normalize</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">ConfigDict</span>
+
+<span class="kn">from</span> <span class="nn">kalista.models.exceptions</span> <span class="kn">import</span> <span class="n">InvalidGame</span>
+
+<span class="c1"># from kalista.models.league import League</span>
+<span class="kn">from</span> <span class="nn">kalista.models.team</span> <span class="kn">import</span> <span class="n">Team</span>
+
+<span class="c1"># from kalista.models.tournament import Tournament</span>
+<span class="c1"># from kalista.models.match import Match</span>
+
+<span class="n">logger</span><span class="o">.</span><span class="n">disable</span><span class="p">(</span><span class="s2">&quot;kalista&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Game">
+<a class="viewcode-back" href="../../../code_overview/kalista.models.html#kalista.models.game.Game">[docs]</a>
+<span class="k">class</span> <span class="nc">Game</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Game model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nb">id</span><span class="p">:</span> <span class="nb">int</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A unique integer identifier for the game. &quot;&quot;&quot;</span>
+
+    <span class="n">match_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A unique integer identifier for the match. &quot;&quot;&quot;</span>
+
+    <span class="n">game_number</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The game number in a best of series. &quot;&quot;&quot;</span>
+
+    <span class="n">tournament</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A unique integer identifier for the tournament. &quot;&quot;&quot;</span>
+
+    <span class="n">blue_team</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Team</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; An instance of :class:`Team` representing the team on the blue side. &quot;&quot;&quot;</span>
+
+    <span class="n">red_team</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Team</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; An instance of :class:`Team` representing the team on the red side. &quot;&quot;&quot;</span>
+
+    <span class="n">winner</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Team</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; An instance of :class:`Team` representing the winning team. &quot;&quot;&quot;</span>
+
+    <span class="n">date</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The date and time of the game. &quot;&quot;&quot;</span>
+
+    <span class="n">region</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A unique integer identifier for the league. &quot;&quot;&quot;</span>
+
+    <span class="n">league</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The unique slug of the league. &quot;&quot;&quot;</span>
+
+    <span class="n">vod</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">patch</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; The patch version of the game. &quot;&quot;&quot;</span>
+
+    <span class="n">participants</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; A DataFrame containing information about the participants in the game. &quot;&quot;&quot;</span>
+
+    <span class="n">_header</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x-api-key&quot;</span><span class="p">:</span> <span class="s2">&quot;0TvQnueqKa5mxJntVWt0w4LpLfEkrV1Ta8rQBb9Z&quot;</span><span class="p">}</span>
+    <span class="n">_player_frames</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">_team_frames</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+    <span class="n">_funcs</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Coroutine</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="n">model_config</span> <span class="o">=</span> <span class="n">ConfigDict</span><span class="p">(</span><span class="n">arbitrary_types_allowed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">player_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the player frames</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame</span>
+<span class="sd">            Player frames, gives information for each frame of a game</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If frames have not been fetched yet. call await fetch() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_player_frames</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Frames have not been fetched yet. call await fetch() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_player_frames</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">team_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the team frames</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataFrame</span>
+<span class="sd">            Team frames, gives information for each frame of a game</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AttributeError</span>
+<span class="sd">            If frames have not been fetched yet. call await fetch() first.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_team_frames</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span>
+                <span class="s2">&quot;Frames have not been fetched yet. call await fetch() first.&quot;</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_team_frames</span>
+
+<div class="viewcode-block" id="Game.fetch">
+<a class="viewcode-back" href="../../../code_overview/kalista.models.html#kalista.models.game.Game.fetch">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">fetch</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fetch all the frame data</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">game_data</span><span class="p">()</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_funcs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_player_frames</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_team_frames</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="k">for</span> <span class="n">res</span> <span class="ow">in</span> <span class="n">results</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Game.game_data">
+<a class="viewcode-back" href="../../../code_overview/kalista.models.html#kalista.models.game.Game.game_data">[docs]</a>
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">game_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets game data for a given gameID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating number of 10s periods in game </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="c1"># Calculates the number of 10s periods for the duration of the game</span>
+        <span class="n">metadata</span><span class="p">,</span> <span class="n">participants</span><span class="p">,</span> <span class="n">first_frames</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_window</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">participants</span> <span class="o">=</span> <span class="n">participants</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">first_frames</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">()</span>
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="n">round_time</span><span class="p">(</span><span class="n">timestamp</span><span class="p">)</span>
+
+        <span class="n">temp_max_ts</span> <span class="o">=</span> <span class="n">timestamp</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">temp_max_ts</span> <span class="o">=</span> <span class="n">temp_max_ts</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Check if game </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> has ended&quot;</span><span class="p">)</span>
+
+        <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">last_frames</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_window</span><span class="p">(</span><span class="n">temp_max_ts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">last_frames</span><span class="p">[</span><span class="s2">&quot;gameState&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="s2">&quot;finished&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="n">max_ts</span> <span class="o">=</span> <span class="n">last_frames</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">to_pydatetime</span><span class="p">()</span>
+        <span class="n">max_ts</span> <span class="o">=</span> <span class="n">round_time</span><span class="p">(</span><span class="n">max_ts</span><span class="p">)</span>
+
+        <span class="n">num_periods</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">max_ts</span> <span class="o">-</span> <span class="n">timestamp</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Number of 10s periods: </span><span class="si">{</span><span class="n">num_periods</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Calculating game </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> data&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_funcs</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_get_window</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">timestamp</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="n">i</span> <span class="o">*</span> <span class="mi">10</span><span class="p">))</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%SZ&quot;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_periods</span><span class="p">)</span>
+        <span class="p">]</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_window</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timestamp</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">DataFrame</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets 10s of game data for a given gameID starting at a given timestamp</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        timestamp</span>
+<span class="sd">            Timestamp to get frame data for a given gameID, must be increments of 10s.</span>
+<span class="sd">            Defaults to &quot;&quot;. &quot;&quot; gives the first 10s of the game.</span>
+
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple[DataFrame]</span>
+<span class="sd">            Tuple of DataFrames containing metadata, participants, and teams</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        InvalidGame</span>
+<span class="sd">            If the gameID is invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Makes request with given params</span>
+        <span class="k">if</span> <span class="n">timestamp</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;startingTime&quot;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">}</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># logger.debug(f&quot;Getting game data for game {self.id} | {timestamp}&quot;)</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="n">aiohttp</span><span class="o">.</span><span class="n">ClientSession</span><span class="p">()</span> <span class="k">as</span> <span class="n">client</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">response</span> <span class="o">=</span> <span class="k">await</span> <span class="n">client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;https://feed.lolesports.com/livestats/v1/window/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">request_error</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error getting game </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> data: </span><span class="si">{</span><span class="n">request_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">InvalidGame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">request_error</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">request_error</span>
+
+                <span class="n">raw_data</span> <span class="o">=</span> <span class="k">await</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">match_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">match_id</span> <span class="o">=</span> <span class="n">raw_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;esportsMatchId&quot;</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">blue_team</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;gameMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;blueTeamMetadata&quot;</span><span class="p">][</span>
+                        <span class="s2">&quot;esportsTeamId&quot;</span>
+                    <span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">red_team</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;gameMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;redTeamMetadata&quot;</span><span class="p">][</span>
+                        <span class="s2">&quot;esportsTeamId&quot;</span>
+                    <span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">patch</span> <span class="o">=</span> <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;gameMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;patchVersion&quot;</span><span class="p">]</span>
+
+                <span class="c1"># Blue team metadata to a DataFrame</span>
+                <span class="n">blue_metadata</span> <span class="o">=</span> <span class="n">json_normalize</span><span class="p">(</span>
+                    <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;gameMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;blueTeamMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;participantMetadata&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Red team metadata to a DataFrame</span>
+                <span class="n">red_metadata</span> <span class="o">=</span> <span class="n">json_normalize</span><span class="p">(</span>
+                    <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;gameMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;redTeamMetadata&quot;</span><span class="p">][</span><span class="s2">&quot;participantMetadata&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Combines two metadata frames into 1</span>
+                <span class="n">metadata</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">blue_metadata</span><span class="p">,</span> <span class="n">red_metadata</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="c1"># Splits column into team code and summoner name</span>
+                <span class="n">metadata</span><span class="p">[[</span><span class="s2">&quot;code&quot;</span><span class="p">,</span> <span class="s2">&quot;summoner_name&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">metadata</span><span class="p">[</span>
+                    <span class="s2">&quot;summonerName&quot;</span>
+                <span class="p">]</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">expand</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+                <span class="c1"># Teams</span>
+                <span class="c1"># Puts json data into DataFrames</span>
+                <span class="n">red_team</span> <span class="o">=</span> <span class="n">json_normalize</span><span class="p">(</span>
+                    <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">],</span>
+                    <span class="n">meta</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;redTeam&quot;</span><span class="p">,</span> <span class="s2">&quot;rfc460Timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;gameState&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">blue_team</span> <span class="o">=</span> <span class="n">json_normalize</span><span class="p">(</span>
+                    <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">],</span>
+                    <span class="n">meta</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;blueTeam&quot;</span><span class="p">,</span> <span class="s2">&quot;rfc460Timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;gameState&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Drop irrelevant columns, players, and other team</span>
+                <span class="n">red_team</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">red_team</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s2">&quot;participants|blueTeam&quot;</span><span class="p">)),</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">blue_team</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span>
+                    <span class="nb">list</span><span class="p">(</span><span class="n">blue_team</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">regex</span><span class="o">=</span><span class="s2">&quot;participants|redTeam&quot;</span><span class="p">)),</span>
+                    <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                    <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Standardize column names</span>
+                <span class="n">red_team</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">red_team</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="sa">r</span><span class="s2">&quot;redTeam.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+                <span class="n">blue_team</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">blue_team</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="sa">r</span><span class="s2">&quot;blueTeam.&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Insert static data</span>
+                <span class="n">red_team</span><span class="p">[</span><span class="s2">&quot;team_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">red_team</span>
+                <span class="n">red_team</span><span class="p">[</span><span class="s2">&quot;side&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;red&quot;</span>
+                <span class="n">red_team</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+                <span class="n">blue_team</span><span class="p">[</span><span class="s2">&quot;team_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blue_team</span>
+                <span class="n">blue_team</span><span class="p">[</span><span class="s2">&quot;side&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span>
+                <span class="n">blue_team</span><span class="p">[</span><span class="s2">&quot;code&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">code</span><span class="o">.</span><span class="n">unique</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="c1"># Combine DataFrames</span>
+                <span class="n">teams</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">red_team</span><span class="p">,</span> <span class="n">blue_team</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="c1"># Convert timestamp from string to datetime</span>
+                <span class="n">teams</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+                    <span class="n">teams</span><span class="p">[</span><span class="s2">&quot;rfc460Timestamp&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ISO8601&quot;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">tz_convert</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">teams</span><span class="p">[</span><span class="s2">&quot;game_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="c1"># Participants</span>
+                <span class="c1"># Combine participant json data into DataFrame</span>
+                <span class="n">blue_participants</span> <span class="o">=</span> <span class="n">json_normalize</span><span class="p">(</span>
+                    <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;blueTeam&quot;</span><span class="p">,</span> <span class="s2">&quot;participants&quot;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;rfc460Timestamp&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">red_participants</span> <span class="o">=</span> <span class="n">json_normalize</span><span class="p">(</span>
+                    <span class="n">raw_data</span><span class="p">[</span><span class="s2">&quot;frames&quot;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;redTeam&quot;</span><span class="p">,</span> <span class="s2">&quot;participants&quot;</span><span class="p">],</span>
+                    <span class="p">[</span><span class="s2">&quot;rfc460Timestamp&quot;</span><span class="p">],</span>
+                <span class="p">)</span>
+                <span class="n">participants</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
+                    <span class="p">[</span><span class="n">blue_participants</span><span class="p">,</span> <span class="n">red_participants</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Merge with metadata</span>
+                <span class="n">participants</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">participants</span><span class="p">,</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s2">&quot;participantId&quot;</span><span class="p">)</span>
+
+                <span class="c1"># Convert timestamp from string to datetime</span>
+                <span class="n">participants</span><span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span>
+                    <span class="n">participants</span><span class="p">[</span><span class="s2">&quot;rfc460Timestamp&quot;</span><span class="p">],</span> <span class="nb">format</span><span class="o">=</span><span class="s2">&quot;ISO8601&quot;</span>
+                <span class="p">)</span><span class="o">.</span><span class="n">dt</span><span class="o">.</span><span class="n">tz_convert</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+
+                <span class="n">participants</span><span class="p">[</span><span class="s2">&quot;game_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+
+                <span class="c1"># Drop useless column</span>
+                <span class="n">participants</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;summonerName&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+                <span class="k">return</span> <span class="n">metadata</span><span class="p">,</span> <span class="n">participants</span><span class="p">,</span> <span class="n">teams</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">request_error</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error getting game </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2"> data: </span><span class="si">{</span><span class="n">request_error</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">InvalidGame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">request_error</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">request_error</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">_get_event_details</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets event details for a given gameID</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TODO: Implement this</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">blue_team</span><span class="si">}</span><span class="s2"> vs </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">red_team</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">patch</span><span class="si">}</span><span class="s2"> | </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="round_time">
+<a class="viewcode-back" href="../../../code_overview/kalista.models.html#kalista.models.game.round_time">[docs]</a>
+<span class="k">def</span> <span class="nf">round_time</span><span class="p">(</span>
+    <span class="n">dt</span><span class="p">:</span> <span class="n">datetime</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">utcnow</span><span class="p">(),</span>
+    <span class="n">date_delta</span><span class="p">:</span> <span class="n">timedelta</span> <span class="o">=</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">seconds</span><span class="o">=</span><span class="mi">10</span><span class="p">),</span>
+    <span class="n">round_up</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Round a datetime object to a multiple of a timedelta</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dt (datetime): datetime.datetime object, default now.</span>
+<span class="sd">        date_delta (timedelta) : timedelta object, we round to a multiple of this, default 1 minute.</span>
+<span class="sd">        round_up (bool) : Round up, down or to nearest</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">round_to</span> <span class="o">=</span> <span class="n">date_delta</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+
+    <span class="n">seconds</span> <span class="o">=</span> <span class="p">(</span><span class="n">dt</span> <span class="o">-</span> <span class="n">dt</span><span class="o">.</span><span class="n">min</span><span class="p">)</span><span class="o">.</span><span class="n">seconds</span>
+
+    <span class="k">if</span> <span class="n">round_up</span><span class="p">:</span>
+        <span class="c1"># // is a floor division, not a comment on following line (like in javascript):</span>
+        <span class="n">rounding</span> <span class="o">=</span> <span class="p">(</span><span class="n">seconds</span> <span class="o">+</span> <span class="n">round_to</span><span class="p">)</span> <span class="o">//</span> <span class="n">round_to</span> <span class="o">*</span> <span class="n">round_to</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">rounding</span> <span class="o">=</span> <span class="n">seconds</span> <span class="o">//</span> <span class="n">round_to</span> <span class="o">*</span> <span class="n">round_to</span>
+
+    <span class="k">return</span> <span class="n">dt</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">rounding</span> <span class="o">-</span> <span class="n">seconds</span><span class="p">,</span> <span class="o">-</span><span class="n">dt</span><span class="o">.</span><span class="n">microsecond</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="VOD">
+<a class="viewcode-back" href="../../../code_overview/kalista.models.html#kalista.models.game.VOD">[docs]</a>
+<span class="k">class</span> <span class="nc">VOD</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    VOD model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">provider</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">locale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">language_english</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">language_original</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">url</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the url for the VOD</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">provider</span> <span class="o">==</span> <span class="s2">&quot;youtube&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;https://www.youtu.be/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="mi">108206581964974058</span><span class="p">)</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">fetch</span><span class="p">())</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">game</span><span class="o">.</span><span class="n">player_frames</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, problemxl.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

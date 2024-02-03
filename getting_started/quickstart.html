@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quickstart &mdash; kalista 0.9 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=049aceee"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Kalista Models" href="../code_overview/kalista.models.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            kalista
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Getting Started:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quickstart</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#code-examples">Code Examples</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import">Import</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#league">League</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#schedule">Schedule</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#standings">Standings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#game">Game</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Code Overview:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../code_overview/kalista.models.html">Kalista Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_overview/exceptions.html">Excepetions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../code_overview/rationale.html">How Kalista Works</a></li>
+</ul>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../genindex.html">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">kalista</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quickstart</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting_started/quickstart.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="quickstart">
+<h1>Quickstart<a class="headerlink" href="#quickstart" title="Link to this heading"></a></h1>
+<section id="code-examples">
+<h2>Code Examples<a class="headerlink" href="#code-examples" title="Link to this heading"></a></h2>
+<section id="import">
+<h3>Import<a class="headerlink" href="#import" title="Link to this heading"></a></h3>
+<p>First lets import the library</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">kalista.models</span> <span class="kn">import</span> <span class="o">*</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>When retrieving data from the API, you will need to use the <cite>fetch</cite> method. This method will initialize the object with
+the data from the API. Lets take a look at an example of how to fetch the LCK league.</p>
+</div>
+</section>
+<section id="league">
+<h3>League<a class="headerlink" href="#league" title="Link to this heading"></a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">league_example</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    League example</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Create a league object</span>
+    <span class="n">league</span> <span class="o">=</span> <span class="n">League</span><span class="p">(</span><span class="n">slug</span><span class="o">=</span><span class="s2">&quot;lck&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Fetch the league data</span>
+    <span class="k">await</span> <span class="n">league</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="c1"># Print the league name</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">league</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="schedule">
+<h3>Schedule<a class="headerlink" href="#schedule" title="Link to this heading"></a></h3>
+<p>Now lets get the schedule for the League of Legends World Championship. You can get the league id by fetching the
+league data using.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">League</span><span class="o">.</span><span class="n">get_all_leagues</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>But for this example we will just use the id, <cite>98767975604431411</cite></p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">schedule_example</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Schedule example</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">worlds_schedule</span> <span class="o">=</span> <span class="n">Schedule</span><span class="p">(</span><span class="n">league_id</span><span class="o">=</span><span class="s2">&quot;98767975604431411&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Fetch the schedule data</span>
+    <span class="k">await</span> <span class="n">worlds_schedule</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">worlds_schedule</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="standings">
+<h3>Standings<a class="headerlink" href="#standings" title="Link to this heading"></a></h3>
+<p>Now lets get the standings for LCK Summer 2023.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">standings_example</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Standings example</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lck_standings</span> <span class="o">=</span> <span class="n">Standings</span><span class="p">(</span><span class="n">tournament_id</span><span class="o">=</span><span class="s2">&quot;110371551277508787&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Fetch the standings data</span>
+    <span class="k">await</span> <span class="n">lck_standings</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">lck_standings</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="game">
+<h3>Game<a class="headerlink" href="#game" title="Link to this heading"></a></h3>
+<p>Now lets get the game data for the first game of the 2023 World Championship Grand Finals.</p>
+<p>The Game model contains a lot of data. <cite>player_frames</cite> and <cite>team_frames</cite> contain the data for each server tick of the game.
+The <cite>player_frames</cite> contain the data for each player in the game, and the <cite>team_frames</cite> contain the data for each team in the game.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">game_example</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Game example</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">game</span> <span class="o">=</span> <span class="n">Game</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s2">&quot;110853020184706766&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Fetch the game data</span>
+    <span class="k">await</span> <span class="n">game</span><span class="o">.</span><span class="n">fetch</span><span class="p">()</span>
+
+    <span class="n">player_frames</span> <span class="o">=</span> <span class="n">game</span><span class="o">.</span><span class="n">player_frames</span>
+    <span class="n">team_frames</span> <span class="o">=</span> <span class="n">game</span><span class="o">.</span><span class="n">team_frames</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../code_overview/kalista.models.html" class="btn btn-neutral float-right" title="Kalista Models" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, problemxl.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
